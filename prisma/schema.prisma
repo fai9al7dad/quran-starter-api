@@ -49,7 +49,7 @@ datasource db {
 model Page {
   id          Int    @id @default(autoincrement())
   pageNumber  Int
-  chapterCode Int
+  chapterCode String
   hizbNumber  Int
   juzNumber   Int
   rubNumber   Int
@@ -64,10 +64,14 @@ model Line {
 }
 
 model Word {
-  id         Int    @id @default(autoincrement())
-  color      String @default("black")
-  text       String
-  line       Line   @relation(fields: [lineNumber], references: [id])
-  lineNumber Int
-  audioUrl   String
+  id         Int    @id
+  color      String? @default("black")
+  text       String?
+  line       Line   @relation(fields: [lineID], references: [id])
+  lineID     Int
+  lineNumber Int?
+  audioUrl   String?
+  chapterCode String?
+  isNewChapter Boolean?
+
 }

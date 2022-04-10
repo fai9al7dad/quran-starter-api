@@ -39,7 +39,12 @@ const formattedPage = async (pageNumber: number) => {
       let chapterCode = ("00" + verseChapter).slice(-3);
       meta.chapterCode = chapterCode;
       if (currentVerse === "1") {
-        lines[curLineNum][0] = { chapterNumber: chapterCode };
+        lines[curLineNum][0] = {
+          id: 90000 + +chapterCode,
+          line_number: curLineNum + 1,
+          chapterCode: chapterCode,
+          isNewChapter: true,
+        };
         // lines[curLineNum][0] = { chapterNumber: "" };
       }
 
@@ -71,8 +76,8 @@ const formattedPage = async (pageNumber: number) => {
     // setStateLines(lines);
 
     let page: any = {};
-    page[pageNumber] = [{ lines: lines }, { meta: meta }];
-    return page;
+    // page[pageNumber] = [{ lines: lines }, { meta: meta }];
+    return { lines, meta };
   };
 
   return fillLines();

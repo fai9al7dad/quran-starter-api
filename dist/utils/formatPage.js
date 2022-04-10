@@ -81,7 +81,12 @@ var formattedPage = function (pageNumber) { return __awaiter(void 0, void 0, voi
                         var chapterCode = ("00" + verseChapter).slice(-3);
                         meta.chapterCode = chapterCode;
                         if (currentVerse === "1") {
-                            lines[curLineNum][0] = { chapterNumber: chapterCode };
+                            lines[curLineNum][0] = {
+                                id: 90000 + +chapterCode,
+                                line_number: curLineNum + 1,
+                                chapterCode: chapterCode,
+                                isNewChapter: true
+                            };
                             // lines[curLineNum][0] = { chapterNumber: "" };
                         }
                         for (var j = 0; j < verseWords.length; j++) {
@@ -111,8 +116,8 @@ var formattedPage = function (pageNumber) { return __awaiter(void 0, void 0, voi
                     // setMeta(meta);
                     // setStateLines(lines);
                     var page = {};
-                    page[pageNumber] = [{ lines: lines }, { meta: meta }];
-                    return page;
+                    // page[pageNumber] = [{ lines: lines }, { meta: meta }];
+                    return { lines: lines, meta: meta };
                 };
                 return [2 /*return*/, fillLines()];
         }
