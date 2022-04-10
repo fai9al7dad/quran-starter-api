@@ -9,3 +9,65 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
+// model User {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//   username  String   @unique
+//   email     String   @unique
+//   isTemp    Boolean  @default(false)
+//   reciter   Duo[]    @relation("reciter")
+//   corrector Duo[]    @relation("corrector")
+// }
+
+// // rename to duo
+// model Duo {
+//   id          Int    @id @default(autoincrement())
+//   reciter     User   @relation("reciter", fields: [reciterID], references: [id])
+//   corrector   User   @relation("corrector", fields: [correctorID], references: [id])
+//   reciterID   Int
+//   correctorID Int
+//   werd        Werd[]
+// }
+
+// model Werd {
+//   id          Int @id @default(autoincrement())
+//   duo         Duo @relation(fields: [duoID], references: [id])
+//   duoID       Int
+//   startWordID Int
+//   endWordID   Int
+
+// }
+
+// model Mistake {
+//   id     Int @id @default(autoincrement())
+//   type   Int
+//   wordID Int
+// }
+
+model Page {
+  id          Int    @id @default(autoincrement())
+  pageNumber  Int
+  chapterCode Int
+  hizbNumber  Int
+  juzNumber   Int
+  rubNumber   Int
+  lines       Line[]
+}
+
+model Line {
+  id     Int    @id @default(autoincrement())
+  page   Page   @relation(fields: [pageID], references: [id])
+  pageID Int
+  words  Word[]
+}
+
+model Word {
+  id         Int    @id @default(autoincrement())
+  color      String @default("black")
+  text       String
+  line       Line   @relation(fields: [lineNumber], references: [id])
+  lineNumber Int
+  audioUrl   String
+}

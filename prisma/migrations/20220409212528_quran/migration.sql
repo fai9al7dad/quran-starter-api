@@ -1,0 +1,25 @@
+-- CreateTable
+CREATE TABLE "Page" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "pageNumber" INTEGER NOT NULL,
+    "chapterCode" INTEGER NOT NULL,
+    "hizbNumber" INTEGER NOT NULL,
+    "juzNumber" INTEGER NOT NULL,
+    "rubNumber" INTEGER NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "Line" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "pageID" INTEGER NOT NULL,
+    CONSTRAINT "Line_pageID_fkey" FOREIGN KEY ("pageID") REFERENCES "Page" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Word" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "color" TEXT NOT NULL DEFAULT 'black',
+    "text" TEXT NOT NULL,
+    "lineNumber" INTEGER NOT NULL,
+    CONSTRAINT "Word_lineNumber_fkey" FOREIGN KEY ("lineNumber") REFERENCES "Line" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
