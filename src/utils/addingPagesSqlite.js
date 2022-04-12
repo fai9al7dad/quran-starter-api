@@ -14,10 +14,7 @@ let formattedPage = file.default;
         setTimeout(async () => {
           const page = await formattedPage(i);
           let { meta, lines } = page;
-          // for (let l = 0; l < 8; l++) {
-          //   let curLine = lines[l];
-          //   console.log(curLine);
-          // }
+
           const pageC = await prisma.page.create({
             data: {
               pageNumber: meta.pageNumber,
@@ -55,7 +52,8 @@ let formattedPage = file.default;
             }
             // console.log(curLine);
           }
-          console.log(`added page ${i} `);
+          let percentage = (i / 604) * 100;
+          console.log(`added ${i} out of 604, ${Math.floor(percentage)}% `);
           i = i + 1;
           if (i <= limit) {
             loop();

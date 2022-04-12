@@ -1,8 +1,13 @@
 import axios from "axios";
 const formattedPage = async (pageNumber: number) => {
-  const res = await axios.get(
-    `https://api.quran.com/api/v4/verses/by_page/${pageNumber}?words=true`
-  );
+  let res;
+  try {
+    res = await axios.get(
+      `https://api.quran.com/api/v4/verses/by_page/${pageNumber}?words=true&word_fields=code_v2`
+    );
+  } catch (error) {
+    console.log(error);
+  }
   let data = res?.data;
 
   const initializeLinesArray = () => {
@@ -50,6 +55,10 @@ const formattedPage = async (pageNumber: number) => {
 
       for (let j = 0; j < verseWords.length; j++) {
         curLineNum = verseWords[j]?.line_number;
+        if (curLineNum > 15) {
+          curLineNum = 4;
+          console.log("error at page ", pageNumber);
+        }
         // if last word of verse this will return undefined
         aftLineNum = verseWords[j + 1]?.line_number;
         if (aftLineNum === undefined) {
@@ -57,11 +66,13 @@ const formattedPage = async (pageNumber: number) => {
         }
         lineChange = curLineNum !== aftLineNum;
         let customWord = {
-          text: verseWords[j].code_v1,
-          id: verseWords[j].id,
-          line_number: verseWords[j].line_number,
-          audio_url: verseWords[j].audio_url,
+          text: verseWords[j]?.text,
+          id: verseWords[j]?.id,
+          line_number: verseWords[j]?.line_number,
+          audio_url: verseWords[j]?.audio_url,
         };
+        // console.log(customWord);
+
         if (!lineChange) {
           lines[curLineNum - 1][innerCounter] = customWord;
           innerCounter = innerCounter + 1;
