@@ -73,5 +73,7 @@ model Word {
   audioUrl   String?
   chapterCode String?
   isNewChapter Boolean?
-
+  isBismillah Boolean?
+  transliteration String?
+  charType String?
 }

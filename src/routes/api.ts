@@ -1,15 +1,31 @@
 const router = require("express").Router();
-import fs from "fs";
-import formattedPage from "../utils/formatPage";
-router.get("/hello", async (req: any, res: any) => {
-  // console.log(`req is ${req.body}`);
-  for (let i = 1; i < 10; i++) {
-    const f = await formattedPage(i);
-    let data = JSON.stringify(f);
-    fs.writeFileSync("quran.json", data);
-    console.log(`added page ${i} `);
-  }
-  res.send({ status: "200" });
-});
 
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient({});
+router.get("/quran/pages", async (req: any, res: any) => {
+  // console.log(`req is ${req.body}`);
+  const pages = await prisma.page.findMany({});
+  res.send({ status: "200", data: pages });
+});
+router.get("/quran/pages/lines", async (req: any, res: any) => {
+  // console.log(`req is ${req.body}`);
+  const pages = await prisma.page.findMany({ include: { lines: {} } });
+  res.send({ status: "200", data: pages });
+});
+router.get("/quran/pages/lines/words", async (req: any, res: any) => {
+  // console.log(`req is ${req.body}`);
+  const pages = await prisma.page.findMany({
+    where: { pageNumber: 5 },
+    include: { lines: { include: { words: {} } } },
+  });
+  res.send({ status: "200", data: pages });
+});
+router.get("/quran/pages/:number", async (req: any, res: any) => {
+  let pn = +req.params.number;
+  const pages = await prisma.page.findMany({
+    where: { pageNumber: pn },
+    include: { lines: { include: { words: {} } } },
+  });
+  res.send({ status: "200", data: pages });
+});
 export default router;

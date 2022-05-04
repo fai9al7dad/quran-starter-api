@@ -3,7 +3,7 @@ const formattedPage = async (pageNumber: number) => {
   let res;
   try {
     res = await axios.get(
-      `https://api.quran.com/api/v4/verses/by_page/${pageNumber}?words=true&word_fields=code_v2`
+      `https://api.quran.com/api/v4/verses/by_page/${pageNumber}?words=true&word_fields="code_v2,page_v2,lines_v2"`
     );
   } catch (error) {
     console.log(error);
@@ -26,7 +26,6 @@ const formattedPage = async (pageNumber: number) => {
     let aftLineNum = 0;
     let lineChange = false;
     // meta info
-
     let meta: any = {
       chapterCode: null,
       pageNumber: pageNumber,
@@ -50,7 +49,14 @@ const formattedPage = async (pageNumber: number) => {
           chapterCode: chapterCode,
           isNewChapter: true,
         };
-        // lines[curLineNum][0] = { chapterNumber: "" };
+        lines[curLineNum + 1][0] = {
+          id: 93000 + +chapterCode,
+          line_number: curLineNum + 2,
+          chapterCode: chapterCode,
+          isNewChapter: true,
+          isBismillah: true,
+          text: "بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ",
+        };
       }
 
       for (let j = 0; j < verseWords.length; j++) {
@@ -70,6 +76,8 @@ const formattedPage = async (pageNumber: number) => {
           id: verseWords[j]?.id,
           line_number: verseWords[j]?.line_number,
           audio_url: verseWords[j]?.audio_url,
+          char_type_name: verseWords[j]?.char_type_name,
+          transliteration: verseWords[j].transliteration.text,
         };
         // console.log(customWord);
 

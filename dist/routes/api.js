@@ -35,34 +35,62 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 exports.__esModule = true;
 var router = require("express").Router();
-var fs_1 = __importDefault(require("fs"));
-var formatPage_1 = __importDefault(require("../utils/formatPage"));
-router.get("/hello", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var i, f, data;
+var client_1 = require("@prisma/client");
+var prisma = new client_1.PrismaClient({});
+router.get("/quran/pages", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var pages;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, prisma.page.findMany({})];
+            case 1:
+                pages = _a.sent();
+                res.send({ status: "200", data: pages });
+                return [2 /*return*/];
+        }
+    });
+}); });
+router.get("/quran/pages/lines", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var pages;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, prisma.page.findMany({ include: { lines: {} } })];
+            case 1:
+                pages = _a.sent();
+                res.send({ status: "200", data: pages });
+                return [2 /*return*/];
+        }
+    });
+}); });
+router.get("/quran/pages/lines/words", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var pages;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, prisma.page.findMany({
+                    where: { pageNumber: 5 },
+                    include: { lines: { include: { words: {} } } }
+                })];
+            case 1:
+                pages = _a.sent();
+                res.send({ status: "200", data: pages });
+                return [2 /*return*/];
+        }
+    });
+}); });
+router.get("/quran/pages/:number", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var pn, pages;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                i = 1;
-                _a.label = 1;
+                pn = +req.params.number;
+                return [4 /*yield*/, prisma.page.findMany({
+                        where: { pageNumber: pn },
+                        include: { lines: { include: { words: {} } } }
+                    })];
             case 1:
-                if (!(i < 10)) return [3 /*break*/, 4];
-                return [4 /*yield*/, (0, formatPage_1["default"])(i)];
-            case 2:
-                f = _a.sent();
-                data = JSON.stringify(f);
-                fs_1["default"].writeFileSync("quran.json", data);
-                console.log("added page ".concat(i, " "));
-                _a.label = 3;
-            case 3:
-                i++;
-                return [3 /*break*/, 1];
-            case 4:
-                res.send({ status: "200" });
+                pages = _a.sent();
+                res.send({ status: "200", data: pages });
                 return [2 /*return*/];
         }
     });

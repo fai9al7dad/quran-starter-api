@@ -47,6 +47,9 @@ let formattedPage = file.default;
                   color: "black",
                   isNewChapter: !!curWord?.isNewChapter,
                   chapterCode: curWord?.chapterCode,
+                  charType: curWord?.char_type_name,
+                  isBismillah: curWord?.isBismillah,
+                  transliteration: curWord?.transliteration,
                 },
               });
             }

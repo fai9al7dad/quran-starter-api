@@ -41,12 +41,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 var axios_1 = __importDefault(require("axios"));
 var formattedPage = function (pageNumber) { return __awaiter(void 0, void 0, void 0, function () {
-    var res, data, initializeLinesArray, lines, fillLines;
+    var res, error_1, data, initializeLinesArray, lines, fillLines;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, axios_1["default"].get("https://api.quran.com/api/v4/verses/by_page/".concat(pageNumber, "?words=true"))];
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, axios_1["default"].get("https://api.quran.com/api/v4/verses/by_page/".concat(pageNumber, "?words=true&word_fields=\"code_v2,page_v2,lines_v2\""))];
             case 1:
                 res = _a.sent();
+                return [3 /*break*/, 3];
+            case 2:
+                error_1 = _a.sent();
+                console.log(error_1);
+                return [3 /*break*/, 3];
+            case 3:
                 data = res === null || res === void 0 ? void 0 : res.data;
                 initializeLinesArray = function () {
                     var lines = [];
@@ -58,7 +66,7 @@ var formattedPage = function (pageNumber) { return __awaiter(void 0, void 0, voi
                 };
                 lines = initializeLinesArray();
                 fillLines = function () {
-                    var _a, _b, _c, _d, _e;
+                    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
                     var innerCounter = 0;
                     var curLineNum = 0;
                     var aftLineNum = 0;
@@ -87,10 +95,21 @@ var formattedPage = function (pageNumber) { return __awaiter(void 0, void 0, voi
                                 chapterCode: chapterCode,
                                 isNewChapter: true
                             };
-                            // lines[curLineNum][0] = { chapterNumber: "" };
+                            lines[curLineNum + 1][0] = {
+                                id: 93000 + +chapterCode,
+                                line_number: curLineNum + 2,
+                                chapterCode: chapterCode,
+                                isNewChapter: true,
+                                isBismillah: true,
+                                text: "بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ"
+                            };
                         }
                         for (var j = 0; j < verseWords.length; j++) {
                             curLineNum = (_b = verseWords[j]) === null || _b === void 0 ? void 0 : _b.line_number;
+                            if (curLineNum > 15) {
+                                curLineNum = 4;
+                                console.log("error at page ", pageNumber);
+                            }
                             // if last word of verse this will return undefined
                             aftLineNum = (_c = verseWords[j + 1]) === null || _c === void 0 ? void 0 : _c.line_number;
                             if (aftLineNum === undefined) {
@@ -98,11 +117,14 @@ var formattedPage = function (pageNumber) { return __awaiter(void 0, void 0, voi
                             }
                             lineChange = curLineNum !== aftLineNum;
                             var customWord = {
-                                text: verseWords[j].code_v1,
-                                id: verseWords[j].id,
-                                line_number: verseWords[j].line_number,
-                                audio_url: verseWords[j].audio_url
+                                text: (_f = verseWords[j]) === null || _f === void 0 ? void 0 : _f.text,
+                                id: (_g = verseWords[j]) === null || _g === void 0 ? void 0 : _g.id,
+                                line_number: (_h = verseWords[j]) === null || _h === void 0 ? void 0 : _h.line_number,
+                                audio_url: (_j = verseWords[j]) === null || _j === void 0 ? void 0 : _j.audio_url,
+                                char_type_name: (_k = verseWords[j]) === null || _k === void 0 ? void 0 : _k.char_type_name,
+                                transliteration: verseWords[j].transliteration.text
                             };
+                            // console.log(customWord);
                             if (!lineChange) {
                                 lines[curLineNum - 1][innerCounter] = customWord;
                                 innerCounter = innerCounter + 1;
