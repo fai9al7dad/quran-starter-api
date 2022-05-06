@@ -3,17 +3,23 @@ const formattedPage = async (pageNumber: number) => {
   let res;
   try {
     res = await axios.get(
-      `https://api.quran.com/api/v4/verses/by_page/${pageNumber}?words=true&word_fields="code_v2,page_v2,lines_v2"`
+      `https://api.qurancdn.com/api/qdc/verses/by_page/${pageNumber}?words=true&per_page=all&word_fields=code_v2`
     );
   } catch (error) {
-    console.log(error);
+    console.log("error from api", error);
   }
   let data = res?.data;
 
   const initializeLinesArray = () => {
     let lines = [];
     // initialze lines
-    for (let i = 0; i < 15; i++) {
+    let linesCount;
+    if (pageNumber < 3) {
+      linesCount = 8;
+    } else {
+      linesCount = 15;
+    }
+    for (let i = 0; i < linesCount; i++) {
       lines.push([]);
     }
     return lines;
@@ -48,6 +54,7 @@ const formattedPage = async (pageNumber: number) => {
           line_number: curLineNum + 1,
           chapterCode: chapterCode,
           isNewChapter: true,
+          pageNumber: verseWords[0].v2_page,
         };
         lines[curLineNum + 1][0] = {
           id: 93000 + +chapterCode,
@@ -56,13 +63,13 @@ const formattedPage = async (pageNumber: number) => {
           isNewChapter: true,
           isBismillah: true,
           text: "بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ",
+          pageNumber: verseWords[0].v2_page,
         };
       }
 
       for (let j = 0; j < verseWords.length; j++) {
         curLineNum = verseWords[j]?.line_number;
         if (curLineNum > 15) {
-          curLineNum = 4;
           console.log("error at page ", pageNumber);
         }
         // if last word of verse this will return undefined
@@ -72,21 +79,22 @@ const formattedPage = async (pageNumber: number) => {
         }
         lineChange = curLineNum !== aftLineNum;
         let customWord = {
-          text: verseWords[j]?.text,
+          text: verseWords[j]?.code_v2,
           id: verseWords[j]?.id,
           line_number: verseWords[j]?.line_number,
           audio_url: verseWords[j]?.audio_url,
           char_type_name: verseWords[j]?.char_type_name,
           transliteration: verseWords[j].transliteration.text,
         };
-        // console.log(customWord);
 
         if (!lineChange) {
           lines[curLineNum - 1][innerCounter] = customWord;
+
           innerCounter = innerCounter + 1;
         }
         if (lineChange) {
           lines[curLineNum - 1][innerCounter] = customWord;
+
           innerCounter = 0;
         }
       }
@@ -96,6 +104,7 @@ const formattedPage = async (pageNumber: number) => {
 
     let page: any = {};
     // page[pageNumber] = [{ lines: lines }, { meta: meta }];
+
     return { lines, meta };
   };
 

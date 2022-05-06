@@ -60,6 +60,7 @@ model Line {
   id     Int    @id @default(autoincrement())
   page   Page   @relation(fields: [pageID], references: [id])
   pageID Int
+  // pageNumber Int
   words  Word[]
 }
 

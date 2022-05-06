@@ -46,20 +46,27 @@ var formattedPage = function (pageNumber) { return __awaiter(void 0, void 0, voi
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, axios_1["default"].get("https://api.quran.com/api/v4/verses/by_page/".concat(pageNumber, "?words=true&word_fields=\"code_v2,page_v2,lines_v2\""))];
+                return [4 /*yield*/, axios_1["default"].get("https://api.qurancdn.com/api/qdc/verses/by_page/".concat(pageNumber, "?words=true&per_page=all&word_fields=code_v2"))];
             case 1:
                 res = _a.sent();
                 return [3 /*break*/, 3];
             case 2:
                 error_1 = _a.sent();
-                console.log(error_1);
+                console.log("error from api", error_1);
                 return [3 /*break*/, 3];
             case 3:
                 data = res === null || res === void 0 ? void 0 : res.data;
                 initializeLinesArray = function () {
                     var lines = [];
                     // initialze lines
-                    for (var i = 0; i < 15; i++) {
+                    var linesCount;
+                    if (pageNumber < 3) {
+                        linesCount = 8;
+                    }
+                    else {
+                        linesCount = 15;
+                    }
+                    for (var i = 0; i < linesCount; i++) {
                         lines.push([]);
                     }
                     return lines;
@@ -93,7 +100,8 @@ var formattedPage = function (pageNumber) { return __awaiter(void 0, void 0, voi
                                 id: 90000 + +chapterCode,
                                 line_number: curLineNum + 1,
                                 chapterCode: chapterCode,
-                                isNewChapter: true
+                                isNewChapter: true,
+                                pageNumber: verseWords[0].v2_page
                             };
                             lines[curLineNum + 1][0] = {
                                 id: 93000 + +chapterCode,
@@ -101,13 +109,13 @@ var formattedPage = function (pageNumber) { return __awaiter(void 0, void 0, voi
                                 chapterCode: chapterCode,
                                 isNewChapter: true,
                                 isBismillah: true,
-                                text: "بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ"
+                                text: "بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ",
+                                pageNumber: verseWords[0].v2_page
                             };
                         }
                         for (var j = 0; j < verseWords.length; j++) {
                             curLineNum = (_b = verseWords[j]) === null || _b === void 0 ? void 0 : _b.line_number;
                             if (curLineNum > 15) {
-                                curLineNum = 4;
                                 console.log("error at page ", pageNumber);
                             }
                             // if last word of verse this will return undefined
@@ -117,14 +125,13 @@ var formattedPage = function (pageNumber) { return __awaiter(void 0, void 0, voi
                             }
                             lineChange = curLineNum !== aftLineNum;
                             var customWord = {
-                                text: (_f = verseWords[j]) === null || _f === void 0 ? void 0 : _f.text,
+                                text: (_f = verseWords[j]) === null || _f === void 0 ? void 0 : _f.code_v2,
                                 id: (_g = verseWords[j]) === null || _g === void 0 ? void 0 : _g.id,
                                 line_number: (_h = verseWords[j]) === null || _h === void 0 ? void 0 : _h.line_number,
                                 audio_url: (_j = verseWords[j]) === null || _j === void 0 ? void 0 : _j.audio_url,
                                 char_type_name: (_k = verseWords[j]) === null || _k === void 0 ? void 0 : _k.char_type_name,
                                 transliteration: verseWords[j].transliteration.text
                             };
-                            // console.log(customWord);
                             if (!lineChange) {
                                 lines[curLineNum - 1][innerCounter] = customWord;
                                 innerCounter = innerCounter + 1;
