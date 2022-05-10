@@ -96,21 +96,41 @@ var formattedPage = function (pageNumber) { return __awaiter(void 0, void 0, voi
                         var chapterCode = ("00" + verseChapter).slice(-3);
                         meta.chapterCode = chapterCode;
                         if (currentVerse === "1") {
-                            lines[curLineNum][0] = {
-                                id: 90000 + +chapterCode,
-                                line_number: curLineNum + 1,
-                                chapterCode: chapterCode,
-                                isNewChapter: true,
-                                pageNumber: verseWords[0].v2_page
-                            };
-                            lines[curLineNum + 1][0] = {
-                                id: 93000 + +chapterCode,
-                                line_number: curLineNum + 2,
-                                chapterCode: chapterCode,
-                                isNewChapter: true,
-                                isBismillah: true,
-                                text: "بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ",
-                                pageNumber: verseWords[0].v2_page
+                            var lineNum = verseWords[0].line_number;
+                            if (lineNum !== 2 || pageNumber === 1) {
+                                lines[curLineNum][0] = {
+                                    id: 90000 + +chapterCode,
+                                    line_number: curLineNum + 1,
+                                    chapterCode: chapterCode,
+                                    isNewChapter: true
+                                };
+                                lines[curLineNum + 1][0] = {
+                                    id: 93000 + +chapterCode,
+                                    line_number: curLineNum + 2,
+                                    chapterCode: chapterCode,
+                                    isNewChapter: true,
+                                    isBismillah: true,
+                                    text: "﷽"
+                                };
+                            }
+                            else {
+                                lines[curLineNum][0] = {
+                                    id: 93000 + +chapterCode,
+                                    line_number: curLineNum + 1,
+                                    chapterCode: chapterCode,
+                                    isNewChapter: true,
+                                    isBismillah: true,
+                                    text: "﷽"
+                                };
+                            }
+                        }
+                        // will be overwritten if last line is not empty, mainly to put surah code in last line
+                        if (pageNumber > 2 && curLineNum === 0) {
+                            lines[14][0] = {
+                                id: 90000 + +chapterCode + 1,
+                                line_number: 15,
+                                chapterCode: (+chapterCode + 1).toString(),
+                                isNewChapter: true
                             };
                         }
                         for (var j = 0; j < verseWords.length; j++) {
@@ -125,7 +145,7 @@ var formattedPage = function (pageNumber) { return __awaiter(void 0, void 0, voi
                             }
                             lineChange = curLineNum !== aftLineNum;
                             var customWord = {
-                                text: (_f = verseWords[j]) === null || _f === void 0 ? void 0 : _f.code_v2,
+                                text: (_f = verseWords[j]) === null || _f === void 0 ? void 0 : _f.code_v2.split(" ").join(""),
                                 id: (_g = verseWords[j]) === null || _g === void 0 ? void 0 : _g.id,
                                 line_number: (_h = verseWords[j]) === null || _h === void 0 ? void 0 : _h.line_number,
                                 audio_url: (_j = verseWords[j]) === null || _j === void 0 ? void 0 : _j.audio_url,
@@ -142,9 +162,6 @@ var formattedPage = function (pageNumber) { return __awaiter(void 0, void 0, voi
                             }
                         }
                     }
-                    // setMeta(meta);
-                    // setStateLines(lines);
-                    var page = {};
                     // page[pageNumber] = [{ lines: lines }, { meta: meta }];
                     return { lines: lines, meta: meta };
                 };

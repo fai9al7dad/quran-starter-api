@@ -48,22 +48,43 @@ const formattedPage = async (pageNumber: number) => {
       // font surahnames required three digits zero padded
       let chapterCode = ("00" + verseChapter).slice(-3);
       meta.chapterCode = chapterCode;
+
       if (currentVerse === "1") {
-        lines[curLineNum][0] = {
-          id: 90000 + +chapterCode,
-          line_number: curLineNum + 1,
-          chapterCode: chapterCode,
+        let lineNum = verseWords[0].line_number;
+
+        if (lineNum !== 2 || pageNumber === 1) {
+          lines[curLineNum][0] = {
+            id: 90000 + +chapterCode,
+            line_number: curLineNum + 1,
+            chapterCode: chapterCode,
+            isNewChapter: true,
+          };
+          lines[curLineNum + 1][0] = {
+            id: 93000 + +chapterCode,
+            line_number: curLineNum + 2,
+            chapterCode: chapterCode,
+            isNewChapter: true,
+            isBismillah: true,
+            text: "﷽",
+          };
+        } else {
+          lines[curLineNum][0] = {
+            id: 93000 + +chapterCode,
+            line_number: curLineNum + 1,
+            chapterCode: chapterCode,
+            isNewChapter: true,
+            isBismillah: true,
+            text: "﷽",
+          };
+        }
+      }
+      // will be overwritten if last line is not empty, mainly to put surah code in last line
+      if (pageNumber > 2 && curLineNum === 0) {
+        lines[14][0] = {
+          id: 90000 + +chapterCode + 1,
+          line_number: 15,
+          chapterCode: (+chapterCode + 1).toString(),
           isNewChapter: true,
-          pageNumber: verseWords[0].v2_page,
-        };
-        lines[curLineNum + 1][0] = {
-          id: 93000 + +chapterCode,
-          line_number: curLineNum + 2,
-          chapterCode: chapterCode,
-          isNewChapter: true,
-          isBismillah: true,
-          text: "بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ",
-          pageNumber: verseWords[0].v2_page,
         };
       }
 
@@ -79,7 +100,7 @@ const formattedPage = async (pageNumber: number) => {
         }
         lineChange = curLineNum !== aftLineNum;
         let customWord = {
-          text: verseWords[j]?.code_v2,
+          text: verseWords[j]?.code_v2.split(" ").join(""),
           id: verseWords[j]?.id,
           line_number: verseWords[j]?.line_number,
           audio_url: verseWords[j]?.audio_url,
@@ -99,10 +120,7 @@ const formattedPage = async (pageNumber: number) => {
         }
       }
     }
-    // setMeta(meta);
-    // setStateLines(lines);
 
-    let page: any = {};
     // page[pageNumber] = [{ lines: lines }, { meta: meta }];
 
     return { lines, meta };

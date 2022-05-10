@@ -12,6 +12,7 @@ let formattedPage = file.default;
     async function loop() {
       const page = await formattedPage(i);
       let { meta, lines } = page;
+      // console.log(lines);
       const pageC = await prisma.page.create({
         data: {
           pageNumber: meta.pageNumber,
@@ -24,9 +25,7 @@ let formattedPage = file.default;
 
       for (let l = 0; l < lines.length; l++) {
         let curLine = lines[l];
-        if (!curLine[0]?.id) {
-          continue;
-        }
+
         const line = await prisma.line.create({
           data: {
             // pageNumber: curLine[0].pageNumber,
@@ -35,6 +34,8 @@ let formattedPage = file.default;
         });
         for (let w = 0; w < curLine.length; w++) {
           let curWord = curLine[w];
+          // console.log(curWord.id);
+          // console.log(i);
           const word = await prisma.word.create({
             data: {
               id: curWord?.id,
