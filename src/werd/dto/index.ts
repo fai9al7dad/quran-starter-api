@@ -1,0 +1,1 @@
+export * from './werd.dto';
